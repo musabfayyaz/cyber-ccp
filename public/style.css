@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #0A2540;
+    --secondary-color: #00D4FF;
+    --text-color: #333;
+    --background-color: #F4F7FA;
+    --white-color: #fff;
+    --error-color: #ff3333;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 1400px;
+    background-color: var(--white-color);
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-body {
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--primary-color);
+    margin-left: 25px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+nav a:hover, #logout:hover {
+    color: var(--secondary-color);
+}
+
+#logout {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.login-container {
+    width: 350px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: var(--white-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: var(--white-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+#transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#transactions-table th, #transactions-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+#transactions-table th {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    font-weight: 600;
+}
+
+#transactions-table tbody tr:nth-child(even) {
+    background-color: var(--background-color);
+}
+
+#account-details p {
+    font-size: 1.1rem;
+    margin: 15px 0;
+}
+
+#account-details p strong {
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
