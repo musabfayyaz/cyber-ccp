@@ -4,18 +4,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
     const logoutButton = document.getElementById('logout');
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
-
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
             sessionStorage.removeItem('user');
+            sessionStorage.removeItem('users');
             window.location.href = '/index.html';
         });
     }
 
     if (window.location.pathname.includes('dashboard.html')) {
-        if (user) {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        const users = JSON.parse(sessionStorage.getItem('users'));
+
+        if (users) {
+            document.getElementById('username').textContent = 'Administrator';
+            const leakedUsersDiv = document.getElementById('leaked-users');
+            leakedUsersDiv.style.display = 'block';
+            const tbody = document.querySelector('#leaked-users-table tbody');
+            users.forEach(u => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.password}</td>
+                    <td>${u.email}</td>
+                    <td>${u.account_number}</td>
+                    <td>${u.balance}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } else if (user) {
             document.getElementById('username').textContent = user.username;
+        } else {
+            window.location.href = '/index.html';
+        }
+
+        if (user || users) {
             const ctx = document.getElementById('myChart').getContext('2d');
             const myChart = new Chart(ctx, {
                 type: 'line',
@@ -37,12 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-        } else {
-            window.location.href = '/index.html';
         }
     }
 
     if (window.location.pathname.includes('account.html')) {
+        const user = JSON.parse(sessionStorage.getItem('user'));
         if (user) {
             fetch('/api/account', {
                 headers: {
@@ -56,12 +79,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('account-number').textContent = data.account_number;
                 document.getElementById('account-balance').textContent = data.balance;
             });
+
+            fetch('/api/users')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#users-table tbody');
+                data.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.password}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            });
         } else {
             window.location.href = '/index.html';
         }
     }
 
     if (window.location.pathname.includes('transactions.html')) {
+        const user = JSON.parse(sessionStorage.getItem('user'));
         if (user) {
             fetch('/api/transactions', {
                 headers: {
@@ -103,8 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Store user info and redirect to dashboard
-                sessionStorage.setItem('user', JSON.stringify(data.user));
+                if (data.users) {
+                    sessionStorage.setItem('users', JSON.stringify(data.users));
+                } else {
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                }
                 window.location.href = '/dashboard.html';
             } else {
                 errorMessage.textContent = data.message;

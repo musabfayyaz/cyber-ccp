@@ -3,17 +3,45 @@ const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+
+// Create a fresh copy of the database on startup
+const dbCleanPath = './database/database.clean.db';
+const dbPath = './database/database.db';
+fs.copyFileSync(dbCleanPath, dbPath);
 
 const app = express();
 const port = 3000;
 
 // Database connection
-const db = new sqlite3.Database('./database/database.db', (err) => {
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error(err.message);
     }
     console.log('Connected to the SQLite database.');
+    hashPasswords();
 });
+
+function hashPasswords() {
+    db.all("SELECT * FROM users", (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+        rows.forEach((row) => {
+            if (!row.password.startsWith('$2b$')) {
+                bcrypt.hash(row.password, 10, (err, hash) => {
+                    if (err) {
+                        console.error(err.message);
+                        return;
+                    }
+                    db.run("UPDATE users SET password = ? WHERE id = ?", [hash, row.id]);
+                });
+            }
+        });
+        console.log('Password hashing check complete.');
+    });
+}
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -73,6 +101,19 @@ app.get('/api/account', checkAuth, (req, res) => {
         } else {
             res.status(404).json({ message: 'User not found' });
         }
+    });
+});
+
+// API endpoint to get all users
+app.get('/api/users', (req, res) => {
+    const query = `SELECT id, username, password FROM users`;
+
+    db.all(query, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
     });
 });
 

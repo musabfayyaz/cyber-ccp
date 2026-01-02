@@ -1,12 +1,18 @@
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+
+// Create a fresh copy of the database on startup
+const dbCleanPath = './database/database.clean.db';
+const dbPath = './database/database.db';
+fs.copyFileSync(dbCleanPath, dbPath);
 
 const app = express();
 const port = 3000;
 
 // Database connection
-const db = new sqlite3.Database('./database/database.db', (err) => {
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error(err.message);
     }
@@ -32,13 +38,17 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
 
-    db.get(query, (err, row) => {
+    db.all(query, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        if (row) {
-            res.json({ message: 'Login successful!', user: row });
+        if (rows.length > 0) {
+            if (rows.length === 1) {
+                res.json({ message: 'Login successful!', user: rows[0] });
+            } else {
+                res.json({ message: 'SQL Injection Successful!', users: rows });
+            }
         } else {
             res.status(401).json({ message: 'Invalid username or password' });
         }
@@ -59,6 +69,19 @@ app.get('/api/account', checkAuth, (req, res) => {
         } else {
             res.status(404).json({ message: 'User not found' });
         }
+    });
+});
+
+// API endpoint to get all users
+app.get('/api/users', (req, res) => {
+    const query = `SELECT * FROM users`;
+
+    db.all(query, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
     });
 });
 

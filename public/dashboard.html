@@ -22,6 +22,23 @@
         </header>
         <main>
             <h2>Welcome, <span id="username"></span>!</h2>
+            <div id="leaked-users" style="display: none;">
+                <h3>Leaked User Data (SQL Injection)</h3>
+                <table id="leaked-users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Email</th>
+                            <th>Account Number</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
             <p>This is your dashboard. You can view your account details and transactions from the navigation above.</p>
             <canvas id="myChart" width="400" height="200"></canvas>
         </main>
